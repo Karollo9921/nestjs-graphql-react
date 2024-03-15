@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { AbstractDocument } from './abstract.schema';
+import { AbstractEntity } from './abstract.entity';
 import {
   FilterQuery,
   Model,
@@ -8,40 +8,38 @@ import {
   UpdateQuery,
 } from 'mongoose';
 
-export abstract class AbstractRepository<TDocument extends AbstractDocument> {
+export abstract class AbstractRepository<T extends AbstractEntity> {
   protected abstract readonly logger: Logger;
 
-  constructor(protected readonly model: Model<TDocument>) {}
+  constructor(protected readonly model: Model<T>) {}
 
-  async create(document: Omit<TDocument, '_id'>): Promise<TDocument> {
-    return (await this.model.create(document)).toJSON() as unknown as TDocument;
+  async create(document: Omit<T, '_id'>): Promise<T> {
+    return (await this.model.create(document)).toJSON() as unknown as T;
   }
 
   async findOne(
-    query: FilterQuery<TDocument>,
-    projection?: ProjectionType<TDocument>,
-  ): Promise<TDocument> {
-    return this.model.findOne(query, projection).lean<TDocument>();
+    query: FilterQuery<T>,
+    projection?: ProjectionType<T>,
+  ): Promise<T> {
+    return this.model.findOne(query, projection).lean<T>();
   }
 
   async find(
-    query: FilterQuery<TDocument>,
-    projection?: ProjectionType<TDocument>,
-  ): Promise<TDocument> {
-    return this.model.find(query, projection).lean<TDocument>();
+    query: FilterQuery<T>,
+    projection?: ProjectionType<T>,
+  ): Promise<T[]> {
+    return this.model.find(query, projection).lean<T[]>();
   }
 
   async findOneAndUpdate(
-    query: FilterQuery<TDocument>,
-    update: UpdateQuery<TDocument>,
-    options?: QueryOptions<TDocument>,
-  ): Promise<TDocument> {
-    return this.model
-      .findOneAndUpdate(query, update, options)
-      .lean<TDocument>();
+    query: FilterQuery<T>,
+    update: UpdateQuery<T>,
+    options?: QueryOptions<T>,
+  ): Promise<T> {
+    return this.model.findOneAndUpdate(query, update, options).lean<T>();
   }
 
-  async findOneAndDelete(query: FilterQuery<TDocument>): Promise<TDocument> {
-    return this.model.findOneAndDelete(query).lean<TDocument>();
+  async findOneAndDelete(query: FilterQuery<T>): Promise<T> {
+    return this.model.findOneAndDelete(query).lean<T>();
   }
 }

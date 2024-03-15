@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { UsersRepository } from './users.repository';
+import { User } from './entities/user.entity';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  create(createUserInput: CreateUserInput) {
-    return 'This action adds a new user';
+  constructor(private readonly usersRepository: UsersRepository) {}
+
+  async create(createUserInput: CreateUserInput) {
+    return this.usersRepository.create(createUserInput as unknown as User);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return this.usersRepository.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    return this.usersRepository.findOne({ _id: new Types.ObjectId(id) });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserInput: UpdateUserInput) {
+    return this.usersRepository.findOneAndUpdate(
+      { _id: new Types.ObjectId(id) },
+      updateUserInput,
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string): Promise<User> {
+    return this.usersRepository.findOneAndDelete({
+      _id: new Types.ObjectId(id),
+    });
   }
 }
