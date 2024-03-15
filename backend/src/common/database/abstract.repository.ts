@@ -5,6 +5,7 @@ import {
   Model,
   ProjectionType,
   QueryOptions,
+  Types,
   UpdateQuery,
 } from 'mongoose';
 
@@ -14,7 +15,9 @@ export abstract class AbstractRepository<T extends AbstractEntity> {
   constructor(protected readonly model: Model<T>) {}
 
   async create(document: Omit<T, '_id'>): Promise<T> {
-    return (await this.model.create(document)).toJSON() as unknown as T;
+    return (
+      await this.model.create({ ...document, _id: new Types.ObjectId() })
+    ).toJSON() as T;
   }
 
   async findOne(
@@ -36,6 +39,8 @@ export abstract class AbstractRepository<T extends AbstractEntity> {
     update: UpdateQuery<T>,
     options?: QueryOptions<T>,
   ): Promise<T> {
+    console.log(query);
+    console.log(update);
     return this.model.findOneAndUpdate(query, update, options).lean<T>();
   }
 
