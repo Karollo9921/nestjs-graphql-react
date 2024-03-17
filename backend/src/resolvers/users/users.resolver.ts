@@ -4,7 +4,7 @@ import {
   UpdateUserInput,
   UsersService,
   User,
-} from '../libs/users';
+} from '../../libs/users';
 import { omit } from 'lodash';
 
 @Resolver(() => User)
