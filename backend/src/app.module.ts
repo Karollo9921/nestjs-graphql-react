@@ -6,7 +6,7 @@ import * as Joi from 'joi';
 import { DatabaseModule } from './common/database/database.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './resolvers/users.module';
 import { LoggerModule } from 'nestjs-pino';
 
 @Module({
