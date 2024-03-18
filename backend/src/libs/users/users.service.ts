@@ -57,6 +57,22 @@ export class UsersService {
     throw new NotFoundException('User does not exists');
   }
 
+  async verifyUser(email: string, password: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ email });
+
+    if (!user) {
+      return;
+    }
+
+    const isPasswordConfirms = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordConfirms) {
+      return;
+    }
+
+    return user;
+  }
+
   private hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
